@@ -1,9 +1,11 @@
 defmodule Tests.TasksOrderingServiceClient do
   def up() do
     api_url = api_url()
+
     case HTTPoison.get!("#{api_url}/up") do
       %HTTPoison.Response{status_code: status_code, body: body} ->
         %{status_code: status_code, body: body}
+
       error ->
         error
     end

@@ -43,7 +43,6 @@ defmodule TasksOrderingWeb.MixProject do
       {:tasks_ordering, in_umbrella: true},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-
       {:httpoison, "~> 2.0", only: :test}
     ]
   end
