@@ -4,8 +4,8 @@ permissions:
   contents: read
 
 jobs:
-  mix_test:
-    name: Build and Test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
+  build_and_test:
+    name: Build, Lint and Test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: test
@@ -34,5 +34,31 @@ jobs:
         run: mix format --check-formatted
       - name: Install dependencies
         run: mix deps.get --only test
-      - name: Run tests
+      - name: Run unit tests
         run: mix test --only unittest
+
+  integration_test:
+    name: Integration tests (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
+    runs-on: ubuntu-20.04
+    env:
+      MIX_ENV: test
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.16.0
+            otp: 26.2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+      - name: Set up Docker Builder
+        uses: docker/setup-buildx-action@v1
+      - name: Run container
+        run: docker compose up --build -d
+      - name: Get dependencies
+        run: mix deps.get
+      - name: Run integration tests
+        run: mix test --only integrationtests

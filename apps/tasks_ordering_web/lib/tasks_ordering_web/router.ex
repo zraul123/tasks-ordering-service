@@ -7,5 +7,7 @@ defmodule TasksOrderingWeb.Router do
 
   scope "/api", TasksOrderingWeb do
     pipe_through :api
+
+    get "/up", TasksRoutes, :up
   end
 end

@@ -28,7 +28,7 @@ defmodule TasksOrderingWeb.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support", "test/clients", "test/integrationtests"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -42,7 +42,8 @@ defmodule TasksOrderingWeb.MixProject do
       {:gettext, "~> 0.20"},
       {:tasks_ordering, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:httpoison, "~> 2.0", only: :test}
     ]
   end
 
