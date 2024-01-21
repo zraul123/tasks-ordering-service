@@ -7,7 +7,12 @@ defmodule TasksOrdering.Umbrella.MixProject do
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: [
+        tasks_ordering_service: [
+          applications: [tasks_ordering: :permanent, tasks_ordering_web: :permanent]
+        ]
+      ]
     ]
   end
 
