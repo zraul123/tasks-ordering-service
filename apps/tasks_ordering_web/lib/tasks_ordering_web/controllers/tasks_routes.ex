@@ -16,7 +16,7 @@ defmodule TasksOrderingWeb.TasksRoutes do
   defp do_order({:invalid, errors}),
     do: {:invalid, %TasksOrderingWeb.EctoValidationError{errors: errors}}
 
-  defp do_order({:valid, %{tasks: tasks}}) do
+  defp do_order({:valid, %{tasks: _tasks}}) do
     {:ok, %{}}
   end
 
