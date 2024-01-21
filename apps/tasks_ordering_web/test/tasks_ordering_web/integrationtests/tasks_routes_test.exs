@@ -46,4 +46,98 @@ defmodule TasksOrderingWeb.ErrorJSONTest do
              "errors" => ["name is a required field", "command is a required field"]
            }
   end
+
+  @tag integrationtests: true
+  test "returns 400 if name is not unique" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a"},
+          %{"name" => "a", "command" => "b"}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 400
+
+    assert Jason.decode!(body) == %{
+             "errors" => ["Task names must be unique, found 'a' that has multiple occurences."]
+           }
+  end
+
+  @tag integrationtests: true
+  test "returns 400 if requires is not an array" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a"},
+          %{"name" => "b", "command" => "b", "requires" => "a"}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 400
+
+    assert Jason.decode!(body) == %{
+             "errors" => ["requires needs to be an array"]
+           }
+  end
+
+  @tag integrationtests: true
+  test "returns 400 if requires is not referencing a valid task" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a", "requires" => ["b"]}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 400
+
+    assert Jason.decode!(body) == %{
+             "errors" => [
+               "Requires must reference an existing task, found 'a' that has an invalid reference."
+             ]
+           }
+  end
+
+  @tag integrationtests: true
+  test "returns 400 if requirements are not unique" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a"},
+          %{"name" => "b", "command" => "b", "requires" => ["a", "a"]}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 400
+
+    assert Jason.decode!(body) == %{
+             "errors" => [
+               "Requires must be unique, found task 'b' which has duplicated requires."
+             ]
+           }
+  end
+
+  @tag integrationtests: true
+  test "returns 400 if requirements reference themselves" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a", "requires" => ["a"]}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 400
+
+    assert Jason.decode!(body) == %{
+             "errors" => [
+               "Requires shouldn't reference itself, found task 'a' which references itself."
+             ]
+           }
+  end
 end
