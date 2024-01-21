@@ -30,6 +30,8 @@ jobs:
           key: deps-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             deps-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}
+      - name: Check lint
+        run: mix format --check-formatted
       - name: Install dependencies
         run: mix deps.get --only test
       - name: Run tests
