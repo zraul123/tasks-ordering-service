@@ -52,6 +52,6 @@ jobs:
       - name: Set up Docker Builder
         uses: docker/setup-buildx-action@v1
       - name: Run container
-        run: docker compose --build -d
+        run: docker compose up --build -d
       - name: Run integration tests
         run: mix test --only integrationtests
