@@ -9,5 +9,6 @@ defmodule TasksOrderingWeb.Router do
     pipe_through :api
 
     get "/up", TasksRoutes, :up
+    post "/order", TasksRoutes, :order
   end
 end
