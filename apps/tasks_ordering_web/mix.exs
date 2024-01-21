@@ -37,12 +37,14 @@ defmodule TasksOrderingWeb.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.10"},
+      {:phoenix_ecto, "~> 4.4"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:tasks_ordering, in_umbrella: true},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      {:params, "~> 2.2"},
       {:httpoison, "~> 2.0", only: :test}
     ]
   end
