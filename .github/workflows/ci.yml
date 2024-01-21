@@ -49,6 +49,11 @@ jobs:
             otp: 26.2
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
       - name: Set up Docker Builder
         uses: docker/setup-buildx-action@v1
       - name: Run container
