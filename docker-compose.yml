@@ -1,0 +1,10 @@
+version: "3"
+services:
+  tasks_ordering_service:
+    build:
+      context: .
+    environment:
+      SECRET_KEY_BASE: "Aw2gbznzApn5ZtpqvU7zqXg/YgxPKViSPdRoraL/HGWuSHiOfeIQ7GZtdvBxkidd"
+      PORT: 4000
+    ports:
+      - "4000:4000"

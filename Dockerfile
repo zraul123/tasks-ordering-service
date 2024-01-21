@@ -19,7 +19,7 @@ RUN mix release
 FROM hexpm/elixir:1.16.0-erlang-26.2.1-alpine-3.18.4 as release
 
 WORKDIR /app
-EXPOSE 80
+EXPOSE $PORT
 ENV MIX_ENV=prod
 ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
 
