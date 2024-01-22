@@ -26,8 +26,8 @@ defmodule TasksOrderingWeb.ErrorJSONTest do
            }
   end
 
-  @tag integrationtests: true
-  test "returns 200 with text as body when presentation is in query params" do
+  @tag integrationtests2: true
+  test "returns 200 with script as body when presentation is script in query params" do
     %{status_code: status_code, body: body} =
       %{
         "tasks" => [
@@ -37,10 +37,21 @@ defmodule TasksOrderingWeb.ErrorJSONTest do
           %{"name" => "d", "command" => "d", "requires" => ["b", "c"]}
         ]
       }
-      |> Tests.TasksOrderingServiceClient.order(presentation: "text")
+      |> Tests.TasksOrderingServiceClient.order(presentation: "script")
 
     assert status_code == 200
-    assert body == "\"a\\nb\\nc\\nd\""
+
+    assert body ==
+             """
+             #/bin/bash
+
+             a
+             b
+             c
+             d
+             """
+             # Multiline strings appends a last \n, todo: see how we can remove it without this
+             |> String.replace_suffix("\n", "")
   end
 
   @tag integrationtests: true
