@@ -5,22 +5,47 @@ defmodule TasksOrderingWeb.TasksRoutesView do
     }
   end
 
-  def ordered_tasks(_args) do
+  def ordered_tasks(%{conn: %Plug.Conn{query_params: query_params}, metadata: metadata}) do
+    presentation = Map.get(query_params, "presentation", "raw")
+
+    render_response(presentation, metadata)
+  end
+
+  defp render_response("text", metadata) do
+    metadata
+    |> Enum.map(fn task -> task.command end)
+    |> Enum.join("\n")
+  end
+
+  defp render_response(_presentation, metadata) do
+    tasks =
+      metadata
+      |> Enum.map(fn task -> %{name: task.name, command: task.command} end)
+
     %{
-      tasks: []
+      tasks: tasks
+    }
+  end
+
+  def ordered_tasks_invalid(%{metadata: %TasksOrderingWeb.ControllerError{error: error}}) do
+    error = get_error_from_validation(error)
+
+    %{
+      errors: [error]
     }
   end
 
   def ordered_tasks_invalid(%{metadata: %TasksOrderingWeb.EctoValidationError{errors: errors}}) do
     errors =
       errors
-      |> IO.inspect(label: "error")
       |> Enum.map(&get_error_from_changeset_format/1)
 
     %{
       errors: errors
     }
   end
+
+  defp get_error_from_validation(:cyclic_graph), do: "The tasks provided should not form a loop."
 
   defp get_error_from_changeset_format({field, {ecto_error, metadata}}) do
     validation = Keyword.get(metadata, :validation)
@@ -49,9 +74,6 @@ defmodule TasksOrderingWeb.TasksRoutesView do
 
   defp get_error_from_validation(_field, _ecto_error, :requires_must_be_unique, name),
     do: "Requires must be unique, found task '#{name}' which has duplicated requires."
-
-  defp get_error_from_validation(_field, _ecto_error, :requirement_referencing_itself, name),
-    do: "Requires shouldn't reference itself, found task '#{name}' which references itself."
 
   defp get_error_from_validation(_field, _ecto_error, :requirement_referencing_itself, name),
     do: "Requires shouldn't reference itself, found task '#{name}' which references itself."

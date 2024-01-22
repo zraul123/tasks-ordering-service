@@ -11,11 +11,14 @@ defmodule Tests.TasksOrderingServiceClient do
     end
   end
 
-  def order(tasks) do
+  def order(tasks, opts \\ []) do
     api_url = api_url()
     serialized_tasks = Jason.encode!(tasks)
+    presentation = Keyword.get(opts, :presentation, "json")
 
-    case HTTPoison.post!("#{api_url}/order", serialized_tasks, "content-type": "application/json") do
+    case HTTPoison.post!("#{api_url}/order?presentation=#{presentation}", serialized_tasks,
+           "content-type": "application/json"
+         ) do
       %HTTPoison.Response{status_code: status_code, body: body} ->
         %{status_code: status_code, body: body}
 

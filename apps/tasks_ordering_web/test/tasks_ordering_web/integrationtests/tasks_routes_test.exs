@@ -2,6 +2,48 @@ defmodule TasksOrderingWeb.ErrorJSONTest do
   use TasksOrderingWeb.ConnCase, async: true
 
   @tag integrationtests: true
+  test "returns 200 with json as body as default presentation" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a"},
+          %{"name" => "b", "command" => "b", "requires" => ["a"]},
+          %{"name" => "c", "command" => "c", "requires" => ["b"]},
+          %{"name" => "d", "command" => "d", "requires" => ["b", "c"]}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 200
+
+    assert Jason.decode!(body) == %{
+             "tasks" => [
+               %{"command" => "a", "name" => "a"},
+               %{"command" => "b", "name" => "b"},
+               %{"command" => "c", "name" => "c"},
+               %{"command" => "d", "name" => "d"}
+             ]
+           }
+  end
+
+  @tag integrationtests: true
+  test "returns 200 with text as body when presentation is in query params" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a"},
+          %{"name" => "b", "command" => "b", "requires" => ["a"]},
+          %{"name" => "c", "command" => "c", "requires" => ["b"]},
+          %{"name" => "d", "command" => "d", "requires" => ["b", "c"]}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order(presentation: "text")
+
+    assert status_code == 200
+    assert body == "\"a\\nb\\nc\\nd\""
+  end
+
+  @tag integrationtests: true
   test "smoke test" do
     %{status_code: status_code, body: body} = Tests.TasksOrderingServiceClient.up()
 
@@ -137,6 +179,26 @@ defmodule TasksOrderingWeb.ErrorJSONTest do
     assert Jason.decode!(body) == %{
              "errors" => [
                "Requires shouldn't reference itself, found task 'a' which references itself."
+             ]
+           }
+  end
+
+  @tag integrationtests: true
+  test "returns 400 if tasks form a loop" do
+    %{status_code: status_code, body: body} =
+      %{
+        "tasks" => [
+          %{"name" => "a", "command" => "a", "requires" => ["b"]},
+          %{"name" => "b", "command" => "b", "requires" => ["a"]}
+        ]
+      }
+      |> Tests.TasksOrderingServiceClient.order()
+
+    assert status_code == 400
+
+    assert Jason.decode!(body) == %{
+             "errors" => [
+               "The tasks provided should not form a loop."
              ]
            }
   end
