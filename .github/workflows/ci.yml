@@ -21,19 +21,10 @@ jobs:
         with:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
-      - name: Restore deps and _build cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            deps
-            _build
-          key: deps-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            deps-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}
-      - name: Check lint
-        run: mix format --check-formatted
       - name: Install dependencies
         run: mix deps.get --only test
+      - name: Check lint
+        run: mix format --check-formatted
       - name: Run unit tests
         run: mix test --only unittest
 

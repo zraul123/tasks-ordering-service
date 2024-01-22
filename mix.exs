@@ -10,7 +10,7 @@ defmodule TasksOrdering.Umbrella.MixProject do
       aliases: aliases(),
       releases: [
         tasks_ordering_service: [
-          applications: [tasks_ordering: :permanent, tasks_ordering_web: :permanent]
+          applications: [tasks_ordering_web: :permanent]
         ]
       ]
     ]

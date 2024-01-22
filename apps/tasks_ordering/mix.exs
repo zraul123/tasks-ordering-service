@@ -11,7 +11,6 @@ defmodule TasksOrdering.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
     ]
@@ -22,7 +21,6 @@ defmodule TasksOrdering.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {TasksOrdering.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
