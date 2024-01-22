@@ -5,25 +5,22 @@ defmodule TasksOrderingWeb.TasksRoutesView do
     }
   end
 
-  def ordered_tasks(%{conn: %Plug.Conn{query_params: query_params}, metadata: metadata}) do
-    presentation = Map.get(query_params, "presentation", "raw")
+  def ordered_tasks(%{tasks: tasks, presentation: "script"}) do
+    task_commands =
+      tasks
+      |> Enum.map(fn task -> task.command end)
+      |> Enum.join("\n")
 
-    render_response(presentation, metadata)
+    "#/bin/bash\n" <> "\n" <> task_commands
   end
 
-  defp render_response("text", metadata) do
-    metadata
-    |> Enum.map(fn task -> task.command end)
-    |> Enum.join("\n")
-  end
-
-  defp render_response(_presentation, metadata) do
-    tasks =
-      metadata
+  def ordered_tasks(%{tasks: tasks}) do
+    rendered_tasks =
+      tasks
       |> Enum.map(fn task -> %{name: task.name, command: task.command} end)
 
     %{
-      tasks: tasks
+      tasks: rendered_tasks
     }
   end
 

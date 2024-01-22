@@ -12,7 +12,8 @@ defmodule TasksOrderingWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        namespace: TasksOrderingWeb
+        namespace: TasksOrderingWeb,
+        format: [:json, :text]
 
       import Plug.Conn
 

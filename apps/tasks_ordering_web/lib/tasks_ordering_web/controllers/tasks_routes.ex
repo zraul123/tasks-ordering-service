@@ -26,10 +26,21 @@ defmodule TasksOrderingWeb.TasksRoutes do
     end
   end
 
-  defp render_output({:ok, ordered_tasks}, conn) do
+  defp render_output({:ok, ordered_tasks}, %Plug.Conn{query_params: query_params} = conn) do
+    presentation = Map.get(query_params, "presentation", "json")
+
+    render_template =
+      case presentation do
+        "script" ->
+          "ordered_tasks.text"
+
+        _ ->
+          "ordered_tasks.json"
+      end
+
     conn
     |> put_status(200)
-    |> render(:ordered_tasks, metadata: ordered_tasks)
+    |> render(render_template, tasks: ordered_tasks, presentation: presentation)
   end
 
   defp render_output({:invalid, errors}, conn) do
