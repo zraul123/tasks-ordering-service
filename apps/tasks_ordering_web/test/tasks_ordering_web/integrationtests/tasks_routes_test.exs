@@ -26,7 +26,7 @@ defmodule TasksOrderingWeb.ErrorJSONTest do
            }
   end
 
-  @tag integrationtests2: true
+  @tag integrationtests: true
   test "returns 200 with script as body when presentation is script in query params" do
     %{status_code: status_code, body: body} =
       %{
