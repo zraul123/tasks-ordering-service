@@ -22,7 +22,6 @@ defmodule TasksOrdering.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {TasksOrdering.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
